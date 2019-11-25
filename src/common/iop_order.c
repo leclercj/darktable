@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DT_IOP_ORDER_VERSION 5
+#define DT_IOP_ORDER_VERSION 6
 
 #define DT_IOP_ORDER_INFO (darktable.unmuted & DT_DEBUG_IOPORDER)
 
@@ -335,6 +335,15 @@ static int _ioppr_legacy_iop_order_step(GList **_iop_order_list, GList *history_
       }
     }
     new_version = 5;
+  }
+  else if(old_version == 5)
+  {
+    _ioppr_insert_iop_after(_iop_order_list, history_list, "mask", "lens", dont_move);
+    _ioppr_insert_iop_after(_iop_order_list, history_list, "inpaint", "mask", dont_move);
+
+    // reorder modules to ensure they are all evenly spaced
+    if(!dont_move) _rewrite_order(*_iop_order_list);
+    new_version = 6;
   }
   // each new version MUST be written as the following (_rewrite_order IS VERY important)
 
